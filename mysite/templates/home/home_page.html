@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load wagtailcore_tags wagtailimages_tags %}
+{% block content %}
+    {% image self.banner_image fill-1920x400 as img %}
+    <div class="jumbotron" style="background-image: url('{{ img.url }}'); background-size: cover; color: #fff !important;">
+        <h1 class="display-4">{{ self.banner_title }}</h1>
+        <div class="lead">{{ self.banner_subtitle|richtext }}</div>
+        {% if self.banner_cta %}
+        <a class="btn btn-primary btn-lg" href="#" role="button">@todo</a>
+        {% endif %}
+    </div>
+
+
+    <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+        {% for loop_cycle in self.carousel_images.all %}
+            {% image loop_cycle.carousel_image fill-900x400 as img %}
+            <div class="carousel-item{% if forloop.counter == 1 %} active{% endif %}">
+                <img src="{{ img.url }}" class="d-block w-100" alt="{{ img.alt }}">
+            </div>
+        {% endfor %}
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+    </div>
+
+
+    {% for block in page.content %}
+        {% include_block block %}
+    {% endfor %}
+{% endblock %}
