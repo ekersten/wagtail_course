@@ -10,6 +10,18 @@
         <div class="text-center">
             <h1>{{ self.custom_title }}</h1>
         </div>
+        <ul>
+            {% for iter in self.blog_authors.all %}
+                {% image iter.author.image fill-50x50 as img %}
+                <li>
+                    <img src="{{ img.url }}" alt="{{ iter.author.name }}">
+                    {{ iter.author.name }}
+                    {% if iter.author.website %}
+                        <a href="{{ iter.author.website }}">(website)</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 
     <div class="container">
