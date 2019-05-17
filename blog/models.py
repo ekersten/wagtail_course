@@ -1,5 +1,6 @@
 from django.db import models
 from django.shortcuts import render
+from django import forms
 
 from wagtail.core.models import Page, Orderable
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
@@ -9,7 +10,7 @@ from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
 
-from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 
 from streams import blocks
 
@@ -64,6 +65,30 @@ class BlogAuthor(models.Model):
 
 register_snippet(BlogAuthor)
 
+
+class BlogCategory(models.Model):
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(
+        verbose_name='slug',
+        allow_unicode=True,
+        max_length=255,
+        help_text='Category Slug'
+    )
+
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('slug')
+    ]
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Blog Category'
+        verbose_name_plural = 'Blog Categories'
+        ordering = ['name']
+
+register_snippet(BlogCategory)
 class BlogListingPage(RoutablePageMixin, Page):
 
     template = 'blog/blog_listing_page.html'
@@ -77,6 +102,11 @@ class BlogListingPage(RoutablePageMixin, Page):
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         context['posts'] = BlogDetailPage.objects.live().public()
+        if request.GET.get('category') is not None:
+            context['posts'] = context['posts'].filter(
+                categories__slug=request.GET.get('category'))
+
+        context['categories'] = BlogCategory.objects.all()
         return context
 
     @route(r'^latest/$', name='latest_posts')
@@ -103,6 +133,8 @@ class BlogDetailPage(Page):
 
     blog_image = models.ForeignKey('wagtailimages.Image', blank=False, null=True, related_name='+', on_delete=models.SET_NULL)
 
+    categories = ParentalManyToManyField('blog.BlogCategory', blank=True)
+
     content = StreamField(
         [
             ('title_and_text', blocks.TitleAndTextBlock()),
@@ -121,5 +153,8 @@ class BlogDetailPage(Page):
         MultiFieldPanel([
             InlinePanel('blog_authors', label='Author', min_num=1, max_num=4)
         ], heading='Author(s)'),
+        MultiFieldPanel([
+            FieldPanel('categories', widget=forms.CheckboxSelectMultiple)
+        ], heading='Categories'),
         StreamFieldPanel('content'),
     ]
