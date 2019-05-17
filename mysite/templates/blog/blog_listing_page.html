@@ -23,7 +23,7 @@
                     </a>
                 </div>
                 <div class="col-sm-9">
-                    <a href="{{ post.url }}">{{ post.custom_title }}{% if post.subtitle %} - {{ post.subtitle }}{% endif %}</a>
+                    <a href="{{ post.url }}">{{ post.custom_title }}{% if post.specific.subtitle %} - {{ post.specific.subtitle }}{% endif %}</a>
                 </div>
             </div>
         {% endfor %}

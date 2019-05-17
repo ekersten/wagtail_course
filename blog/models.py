@@ -112,7 +112,7 @@ class BlogListingPage(RoutablePageMixin, Page):
     @route(r'^latest/$', name='latest_posts')
     def latest_blog_posts_only_shows_last_5(self, request, *args, **kwargs):
         context = self.get_context(request, *args, **kwargs)
-        context['latest_posts'] = BlogDetailPage.objects.live().public()[:1]
+        context['latest_posts'] = BlogDetailPage.objects.live().public()[:3]
         return render(request, 'blog/latest_posts.html', context)
 
     def get_sitemap_urls(self, request=None):
@@ -203,7 +203,7 @@ class ArticleBlogPage(BlogDetailPage):
 
 class VideoBlogPage(BlogDetailPage):
     template = 'blog/video_blog_page.html'
-    
+
     youtube_video_id = models.CharField(max_length=30)
 
     content_panels = Page.content_panels + [
