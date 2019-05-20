@@ -22,6 +22,13 @@ INSTALLED_APPS = INSTALLED_APPS + [
 
 # INTERNAL_IPS = ('127.0.0.1', '172.17.0.1')
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': 'C:\wamp64\www\demos\wagtail_course\mysite\cache'
+    }
+}
+
 try:
     from .local import *
 except ImportError:
