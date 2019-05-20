@@ -1,6 +1,7 @@
 from django.db import models
 from django.shortcuts import render
 from django import forms
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 from wagtail.core.models import Page, Orderable
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
@@ -101,10 +102,24 @@ class BlogListingPage(RoutablePageMixin, Page):
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        context['posts'] = BlogDetailPage.objects.live().public()
-        if request.GET.get('category') is not None:
-            context['posts'] = context['posts'].filter(
-                categories__slug=request.GET.get('category'))
+        all_posts  = BlogDetailPage.objects.live().public().order_by('-first_published_at')
+
+        paginator = Paginator(all_posts, 1)
+
+        page =  request.GET.get('page')
+
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+
+        context['posts'] = posts
+
+        # if request.GET.get('category') is not None:
+        #     context['posts'] = context['posts'].filter(
+        #         categories__slug=request.GET.get('category'))
 
         context['categories'] = BlogCategory.objects.all()
         return context
