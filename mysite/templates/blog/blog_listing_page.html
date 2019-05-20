@@ -34,7 +34,7 @@
         <div class="row">
             <div class="col-lg-12">
             
-                <div class="pagination">
+                <ul class="pagination">
                     {% if posts.has_previous %}
                     <li class="page-item">
                         <a href="?page={{ posts.previous_page_number }}" class="page-link">&lt;</a>
@@ -52,7 +52,7 @@
                         <a href="?page={{ posts.next_page_number }}" class="page-link">&gt;</a>
                     </li>
                     {% endif %}
-                </div>
+                </ul>
             
             </div>
         </div>
