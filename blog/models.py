@@ -139,6 +139,7 @@ register_snippet(BlogCategory)
 class BlogListingPage(RoutablePageMixin, Page):
 
     template = 'blog/blog_listing_page.html'
+    ajax_template = 'blog/blog_listing_page_ajax.html'
     max_count = 1
     subpage_types = ['blog.VideoBlogPage', 'blog.ArticleBlogPage']
 
