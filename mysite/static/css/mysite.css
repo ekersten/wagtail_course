@@ -1,0 +1,48 @@
+a[href$=".gif"] {
+    text-decoration: none;
+    border-bottom: 1px dashed yellowgreen;
+}
+
+#giphy-image {
+    z-index: 50;
+    overflow: hidden;
+}
+
+#giphy-image img {
+    height: 260px;
+    opacity: 0;
+    z-index: 1;
+}
+
+#giphy-image::before {
+    content: "";
+    top: 0;
+    left: 0;
+    z-index: 2;
+    display: block;
+    height: 260px;
+    position: absolute;
+    background: black;
+    transform-origin: top left;
+    animation-delay: .35s;
+    animation: block-reveal 1.2s linear;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes block-reveal {
+    0% {
+        width: 0%;
+    }
+    25% {
+        width: 100%;
+    }
+    40% {
+        left: 0%;
+    }
+    60% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
