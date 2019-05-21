@@ -56,6 +56,10 @@ class HomePage(RoutablePageMixin, Page):
     # only one on site
     max_count = 1
 
+    # search_fields = Page.search_fields + [
+        
+    # ]
+
     api_fields = [
         APIField('banner_title'),
         APIField('banner_subtitle'),
