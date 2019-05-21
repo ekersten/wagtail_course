@@ -15,7 +15,10 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
 from wagtail.images.api.fields import ImageRenditionField
 
+from taggit.models import TaggedItemBase
+
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
+from modelcluster.contrib.taggit import ClusterTaggableManager
 
 from streams import blocks
 
@@ -152,8 +155,16 @@ class BlogListingPage(RoutablePageMixin, Page):
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         all_posts  = BlogDetailPage.objects.live().public().order_by('-first_published_at')
+        
+        if request.GET.get('tag', None):
+            tags = request.GET.get('tag')
+            all_posts = all_posts.filter(tags__slug__in=[tags])
 
-        paginator = Paginator(all_posts, 2)
+        if request.GET.get('category', None):
+            category = request.GET.get('category')
+            all_posts = all_posts.filter(categories__slug=category)
+
+        paginator = Paginator(all_posts, 4)
 
         page =  request.GET.get('page')
 
@@ -190,11 +201,21 @@ class BlogListingPage(RoutablePageMixin, Page):
         })
         return sitemap
 
+class BlogPageTag(TaggedItemBase):
+    content_object = ParentalKey(
+        'BlogDetailPage',
+        related_name='tagged_items',
+        on_delete=models.CASCADE
+    )
+
+
 
 class BlogDetailPage(Page):
 
     subpage_types = []
     parent_page_types = ['blog.BlogListingPage']
+
+    tags = ClusterTaggableManager(through=BlogPageTag, blank=True)
 
     custom_title = models.CharField(
         max_length=100, blank=False, null=False, help_text='Overwrite default title')
@@ -217,6 +238,7 @@ class BlogDetailPage(Page):
 
     content_panels = Page.content_panels + [
         FieldPanel('custom_title'),
+        FieldPanel('tags'),
         ImageChooserPanel('banner_image'),
         MultiFieldPanel(
             [
@@ -260,6 +282,7 @@ class ArticleBlogPage(BlogDetailPage):
     content_panels = Page.content_panels + [
         FieldPanel('custom_title'),
         FieldPanel('subtitle'),
+        FieldPanel('tags'),
         ImageChooserPanel('banner_image'),
         ImageChooserPanel('intro_image'),
         MultiFieldPanel(
