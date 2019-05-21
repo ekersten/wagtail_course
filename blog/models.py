@@ -13,6 +13,7 @@ from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, MultiField
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
+from wagtail.images.api.fields import ImageRenditionField
 
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 
@@ -57,7 +58,14 @@ class BlogAuthorsOrderable(Orderable):
     api_fields = [
         APIField('author_name'),
         APIField('author_website'),
-        APIField('author_image', serializer=ImageSerializedField()),
+        # APIField('author_image', serializer=ImageSerializedField()),
+        APIField(
+            'image',
+            serializer=ImageRenditionField(
+                'fill-200x250',
+                source='author_image'
+            )
+        ),
     ]
 
 
