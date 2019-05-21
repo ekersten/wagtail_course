@@ -6,7 +6,15 @@ from modelcluster.fields import ParentalKey
 from wagtail.api import APIField
 from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField
-from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel, StreamFieldPanel, InlinePanel, MultiFieldPanel
+from wagtail.admin.edit_handlers import (
+    FieldPanel,
+    PageChooserPanel,
+    StreamFieldPanel,
+    InlinePanel,
+    MultiFieldPanel,
+    ObjectList,
+    TabbedInterface,
+)
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.core.fields import StreamField
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
@@ -76,17 +84,33 @@ class HomePage(RoutablePageMixin, Page):
     ]
 
     content_panels = Page.content_panels + [
+        
+        MultiFieldPanel([
+            InlinePanel('carousel_images', max_num=5, min_num=1,label='Image'),
+        ], heading='Carousel Images'),
+        StreamFieldPanel('content'),
+    ]
+
+    # promote_panels = []
+    # settings_panels = []
+
+    banner_panels = [
         MultiFieldPanel([
             FieldPanel('banner_title'),
             FieldPanel('banner_subtitle'),
             ImageChooserPanel('banner_image'),
             PageChooserPanel('banner_cta'),
         ], heading='Banners Options'),
-        MultiFieldPanel([
-            InlinePanel('carousel_images', max_num=5, min_num=1,label='Image'),
-        ], heading='Carousel Images'),
-        StreamFieldPanel('content'),
     ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading='Content'),
+            ObjectList(banner_panels, heading='Banner'),
+            ObjectList(Page.promote_panels, heading='Promote'),
+            ObjectList(Page.settings_panels, heading='Settings'),
+        ]
+    )
 
     class Meta:
         verbose_name = 'Home Page'
