@@ -18,6 +18,17 @@ from modelcluster.fields import ParentalKey, ParentalManyToManyField
 
 from streams import blocks
 
+from rest_framework.fields import Field
+
+class ImageSerializedField(Field):
+    def to_representation(self, value):
+        return {
+            'url': value.file.url,
+            'title': value.title,
+            'width': value.width,
+            'height': value.height
+        }
+
 # Create your models here.
 
 class BlogAuthorsOrderable(Orderable):
@@ -39,9 +50,14 @@ class BlogAuthorsOrderable(Orderable):
     def author_website(self):
         return self.author.website
 
+    @property
+    def author_image(self):
+        return self.author.image
+
     api_fields = [
         APIField('author_name'),
         APIField('author_website'),
+        APIField('author_image', serializer=ImageSerializedField()),
     ]
 
 
