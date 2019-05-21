@@ -27,6 +27,10 @@ class HomePageCarouselImages(Orderable):
         ImageChooserPanel('carousel_image')
     ]
 
+    api_fields = [
+        APIField('carousel_image')
+    ]
+
 class HomePage(RoutablePageMixin, Page):
     banner_title = models.CharField(max_length=100, blank=False, null=True)
     banner_subtitle = RichTextField(features=['bold', 'italic'])
@@ -65,6 +69,8 @@ class HomePage(RoutablePageMixin, Page):
         APIField('banner_subtitle'),
         APIField('banner_image'),
         APIField('banner_cta'),
+        APIField('carousel_images'),
+        APIField('content'),
     ]
 
     content_panels = Page.content_panels + [

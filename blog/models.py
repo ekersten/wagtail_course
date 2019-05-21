@@ -5,6 +5,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.core.cache.utils import make_template_fragment_key
 from django.core.cache import cache
 
+from wagtail.api import APIField
 from wagtail.core.models import Page, Orderable
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core.fields import StreamField
@@ -28,6 +29,19 @@ class BlogAuthorsOrderable(Orderable):
 
     panels = [
         SnippetChooserPanel('author'),
+    ]
+
+    @property
+    def author_name(self):
+        return self.author.name
+
+    @property
+    def author_website(self):
+        return self.author.website
+
+    api_fields = [
+        APIField('author_name'),
+        APIField('author_website'),
     ]
 
 
@@ -57,6 +71,12 @@ class BlogAuthor(models.Model):
             ],
             heading='Link'
         )
+    ]
+
+    api_fields = [
+        APIField('name'),
+        APIField('image'),
+        APIField('website'),
     ]
 
     def __str__(self):
@@ -180,6 +200,11 @@ class BlogDetailPage(Page):
             heading='Categories'
         ),
         StreamFieldPanel('content'),
+    ]
+
+    api_fields = [
+        APIField('blog_authors'),
+        APIField('content'),
     ]
 
     def save(self, *args, **kwargs):
