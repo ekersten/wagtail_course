@@ -90,5 +90,6 @@ db.sqlite3
 
 .vscode
 media/*
+static/*
 !media/.gitkeep
 mysite/cache/*
