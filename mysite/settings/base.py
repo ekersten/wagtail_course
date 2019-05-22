@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'menus',
     'contact',
     'core',
+    'behance',
 
     'wagtail.contrib.forms',
     'wagtail.contrib.modeladmin',
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
 
     'modelcluster',
     'taggit',
+    'wagtailorderable',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -185,3 +187,6 @@ BASE_URL = 'http://example.com'
 RECAPTCHA_PUBLIC_KEY = '6LfzjqQUAAAAABlQFnnxY7bnMeBT7rGqN0TgSfer'
 RECAPTCHA_PRIVATE_KEY = '6LfzjqQUAAAAAIsSUuf7v4pCiTKxcwPkAdWAIsRQ'
 NOCAPTCHA = True
+
+
+BEHANCE_API_KEY = 'AvKStg3Zn7bNYmzqvIvGrir2h05ApM86'
