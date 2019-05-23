@@ -1,3 +1,4 @@
+import os
 from django.utils.translation import ugettext as _
 from django.urls import reverse
 from django.http import HttpResponse
@@ -14,8 +15,11 @@ from wagtail.contrib.modeladmin.views import IndexView
 from wagtailorderable.modeladmin.mixins import OrderableMixin
 
 import requests
+import re
+import sys
 
-from .models import BehanceProject
+from .models import BehanceProject, BehanceProjectModule
+from .helpers import create_wagtail_image_from_remote
 
 class ImportButtonHelper(ButtonHelper):
     import_button_classnames = ['bicolor', 'icon', 'icon-download']
@@ -61,7 +65,8 @@ class ImportAdminURLHelper(AdminURLHelper):
 
 class ImportView(IndexView):
     def import_projects(self):
-        
+        images_folder = 'original_images'
+
         try:
             url = 'https://api.behance.net/v2/users/AgenciaEgo/projects?client_id={}'.format(settings.BEHANCE_API_KEY)
 
@@ -71,29 +76,80 @@ class ImportView(IndexView):
 
 
             for project in data.get('projects'):
+                is_project_new = False
                 behance_id = project.get('id')
                 behance_name = project.get('name')
                 name = behance_name
+                cover_url = project.get('covers').get('original')
 
                 try:
                     db_project = BehanceProject.objects.get(behance_id=behance_id)
                     db_project.behance_name = behance_name
                 except BehanceProject.DoesNotExist:
+                    is_project_new = True
                     db_project = BehanceProject(
                         behance_id=behance_id,
                         behance_name=behance_name,
-                        name=behance_name
+                        name=behance_name,
+                        cover=create_wagtail_image_from_remote(cover_url),
                     )
                 
                 db_project.save()
+
+                # get project details and modules
+                project_url = 'https://www.behance.net/v2/projects/{}?api_key={}'.format(db_project.behance_id, settings.BEHANCE_API_KEY)
+
+                print('fetching {}'.format(project_url))
+
+                resp = requests.get(project_url)
+                data = resp.json()
+                project_item = data.get('project')
+
+                print(project_item.get('name'))
+                
+                # save description on first save
+                if is_project_new:
+                    db_project.description = project.get('description')
+                    db_project.save()
+
+                # clear all modules
+                db_project.modules.all().delete()
+                sort_order = 1
+                for module in project_item.get('modules'):
+                    if module.get('type') == 'image':
+                        image = create_wagtail_image_from_remote(module.get('sizes').get('original'))
+                        text = None
+                    elif module.get('type') == 'text':
+                        image = None
+                        regex = r"</?span( style=\"[\Wa-z0-9#:;]*\\?\")?>"
+                        test_str = module.get('text')
+                        subst = ""
+                        # You can manually specify the number of replacements by changing the 4th argument
+                        text = re.sub(regex, subst, test_str, 0, re.MULTILINE | re.IGNORECASE)
+                    else:
+                        image = None
+                        text = None
+
+                    db_module = BehanceProjectModule(
+                        sort_order=sort_order,
+                        type=module.get('type'),
+                        image=image,
+                        text=text,
+                        project=db_project
+                    )
+                    db_module.save()
+                    sort_order += 1
+
 
 
             messages.add_message(self.request, messages.SUCCESS, _('Projects imported correctly'))
             return redirect('behance_behanceproject_modeladmin_index')
                 
-        except AttributeError:
-            messages.add_message(self.request, messages.ERROR, _(
-                'BEHANCE_API_KEY not set'))
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            
+            messages.add_message(self.request, messages.ERROR, '{} on {} on line {}'.format('Exception', fname, exc_tb.tb_lineno))
             return redirect('behance_behanceproject_modeladmin_index')
 
 

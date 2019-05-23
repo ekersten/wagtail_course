@@ -5,10 +5,5 @@
         <div class="importbutton">
             {% include 'modeladmin/includes/button.html' with button=view.button_helper.import_button %}
         </div>
-        {% if user_can_create %}
-        <div class="addbutton">
-            {% include 'modeladmin/includes/button.html' with button=view.button_helper.add_button %}
-        </div>
-        {% endif %}
     </div>
 {% endblock %}

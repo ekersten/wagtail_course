@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load wagtailimages_tags %}
+
+
+{% block content %}
+    <h1>{{ self.title }}</h1>
+    {% for module in self.project.modules.all %}
+        <div class="image">
+            {% if module.type == 'image' %}
+                {% image module.image width-200 as img %}
+                <img src="{{ img.url }}" alt="">
+            {% endif %}
+            
+        </div>
+    {% endfor %}
+{% endblock %}

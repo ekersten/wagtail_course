@@ -68,7 +68,7 @@ class HomePage(RoutablePageMixin, Page):
     # only one on site
     max_count = 1
     # parent_page_type = ['wagtailcore.Page']
-    subpage_types = ['blog.BlogListingPage', 'contact.ContactPage', 'flex.FlexPage']
+    subpage_types = ['blog.BlogListingPage', 'contact.ContactPage', 'flex.FlexPage', 'behance.BehanceProjectListingPage']
 
     # search_fields = Page.search_fields + [
         

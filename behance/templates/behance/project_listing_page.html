@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Projects</h1>
+<div class="list-group">
+    {% for page in self.get_children %}
+        <a href="{{ page.url }}" class="list-group-item list-group-item-action ">{{ page.title }}</a>
+    {% endfor %}
+</div>
+{% endblock %}
