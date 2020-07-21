@@ -32,7 +32,7 @@ sqlparse==0.3.0
 traitlets==4.3.2
 Unidecode==1.0.23
 urllib3==1.24.3
-wagtail==2.5.1
+wagtail==2.7.4
 wagtail-django-recaptcha==1.0
 wagtail-modelchooser==2.2.1
 -e git+https://github.com/djdmorrison/wagtail-orderable.git@76fc505cdc7ed227fcd91abc1469e3e134d21940#egg=wagtail_orderable
