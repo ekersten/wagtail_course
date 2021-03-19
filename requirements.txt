@@ -21,7 +21,7 @@ ipython-genutils==0.2.0
 jedi==0.13.3
 parso==0.4.0
 pickleshare==0.7.5
-Pillow==5.4.1
+Pillow==8.1.1
 prompt-toolkit==2.0.9
 pycodestyle==2.5.0
 Pygments==2.4.0
