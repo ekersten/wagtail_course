@@ -24,7 +24,7 @@ pickleshare==0.7.5
 Pillow==5.4.1
 prompt-toolkit==2.0.9
 pycodestyle==2.5.0
-Pygments==2.4.0
+Pygments==2.7.4
 pytz==2019.1
 requests==2.21.0
 six==1.12.0
