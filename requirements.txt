@@ -31,7 +31,7 @@ six==1.12.0
 sqlparse==0.3.0
 traitlets==4.3.2
 Unidecode==1.0.23
-urllib3==1.24.3
+urllib3==1.26.5
 wagtail==2.5.1
 wagtail-django-recaptcha==1.0
 wagtail-modelchooser==2.2.1
