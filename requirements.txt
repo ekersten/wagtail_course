@@ -5,7 +5,7 @@ certifi==2019.3.9
 chardet==3.0.4
 colorama==0.4.1
 decorator==4.4.0
-Django==2.2.1
+Django==2.2.27
 django-debug-toolbar==1.11
 django-extensions==2.1.6
 django-modelcluster==4.4
